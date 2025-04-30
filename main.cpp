@@ -1,3 +1,4 @@
+#include <chrono>
 #include <iostream>
 
 // Returns true if n is prime, false otherwise
@@ -23,12 +24,26 @@ int main() {
     std::cout << "Enter the maximum number to check for primality: ";
     int N;
     std::cin >> N;
+    bool is_prime {false};
 
+    std::chrono::duration<double, std::milli> total_ms {0};
+    std::chrono::duration<double, std::milli> working_ms {0};
+
+    auto total_start = std::chrono::high_resolution_clock::now();
     for (int i = 2; i <= N; ++i) {
-        if (isPrime(i)) {
+        auto working_start = std::chrono::high_resolution_clock::now();
+        is_prime = isPrime(i);
+        auto working_end = std::chrono::high_resolution_clock::now();
+        working_ms += (working_end - working_start);
+        if (is_prime) {
             std::cout << i << " is prime\n";
         }
     }
+    auto total_end = std::chrono::high_resolution_clock::now();
+    total_ms = (total_end - total_start);
+
+    std::cout << "Elapsed time: " << total_ms.count() << " ms\n";
+    std::cout << "Working time: " << working_ms.count() << " ms\n";
 
     return 0;
 }
