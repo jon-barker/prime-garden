@@ -1,0 +1,25 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Build with clang++",
+        "type": "shell",
+        "command": "/usr/bin/clang++",
+        "args": [
+          "-std=c++20",
+          "-Wall",
+          "-Wextra",
+          "-g",
+          "main.cpp",
+          "-o",
+          "main"
+        ],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "problemMatcher": ["$gcc"],
+        "detail": "Build C++ with clang++"
+      }
+    ]
+  }
