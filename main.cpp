@@ -1,6 +1,20 @@
 #include <chrono>
 #include <iostream>
 
+class ScopedTimer {
+    const char* label;
+    std::chrono::high_resolution_clock::time_point start;
+public:
+    explicit ScopedTimer(const char* label)
+        : label(label), start(std::chrono::high_resolution_clock::now()) {}
+
+    ~ScopedTimer() {
+        auto end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double, std::milli> elapsed = end - start;
+        std::cout << label << ": " << elapsed.count() << " ms\n";
+    }
+};
+
 // Returns true if n is prime, false otherwise
 inline bool isPrime(int n) {
     if (n < 2) return false;
@@ -26,24 +40,14 @@ int main() {
     std::cin >> N;
     bool is_prime {false};
 
-    std::chrono::duration<double, std::milli> total_ms {0};
-    std::chrono::duration<double, std::milli> working_ms {0};
-
-    auto total_start = std::chrono::high_resolution_clock::now();
-    for (int i = 2; i <= N; ++i) {
-        auto working_start = std::chrono::high_resolution_clock::now();
-        is_prime = isPrime(i);
-        auto working_end = std::chrono::high_resolution_clock::now();
-        working_ms += (working_end - working_start);
-        if (is_prime) {
-            std::cout << i << " is prime\n";
+    {
+        ScopedTimer total_timer("Total time");
+        for (int i = 2; i <= N; ++i) {
+            ScopedTimer loop_timer("  isPrime");
+            is_prime = isPrime(i);
+            if (is_prime) std::cout << i << " is prime\n";
         }
     }
-    auto total_end = std::chrono::high_resolution_clock::now();
-    total_ms = (total_end - total_start);
-
-    std::cout << "Elapsed time: " << total_ms.count() << " ms\n";
-    std::cout << "Working time: " << working_ms.count() << " ms\n";
 
     return 0;
 }
